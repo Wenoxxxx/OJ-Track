@@ -1,14 +1,16 @@
 # Dependencies
 node_modules/
+**/node_modules/
 
 # Build output
 dist/
 dist-ssr/
+app/dist/
 
 # Environment variables
 .env
-.env.local
-.env.*.local
+.env*
+app/.env*
 
 # Logs
 logs/
@@ -21,16 +23,38 @@ pnpm-debug.log*
 .vscode/*
 !.vscode/extensions.json
 .idea/
+*.sublime-*
+*.komodoproject
+*.code-workspace
+
+# OS files
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
-# TypeScript build info
-*.tsbuildinfo
+# Vite
+.vite/
+.vite-cache/
+.vitest/
 
-# Local temp
-*.local
+# Build artifacts
+*.tsbuildinfo
+**/*.tsbuildinfo
+
+# Coverage
+coverage/
+*.lcov
+
+# Package locks
+**/package-lock.json
+**/yarn.lock
+**/pnpm-lock.yaml
+
+# IDE temp files
+*.swp
+*.swo
+*~
