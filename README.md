@@ -8,7 +8,6 @@ A commission management system for OJ Creatives. OJ-Track provides a centralized
 - **React** — Component-based frontend framework
 - **Vite** — Fast build tool and dev server
 - **Tailwind CSS** — Utility-first styling for responsive design
-- **Shadcn UI** — Prebuilt, accessible UI components styled with Tailwind
 - **Supabase** — Backend-as-a-service for authentication, database, and storage
 
 ## Features
