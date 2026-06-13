@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    /* Silence deprecation */
+    "ignoreDeprecations": "6.0",
+
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "target": "es2023",
     "lib": ["ES2023", "DOM"],
@@ -19,7 +22,14 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    /* Path alias */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
+
   "include": ["src"]
 }

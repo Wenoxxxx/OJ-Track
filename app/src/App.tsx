@@ -1,9 +1,7 @@
-export default function App() {
-  return (
-    <div className="App">
-      <h1 className="text-3xl font-bold">
-        Hello world!
-      </h1>
-    </div>
-  )
+import DashboardPage from "./pages/dashboard";
+
+function App() {
+  return <DashboardPage />;
 }
+
+export default App;
