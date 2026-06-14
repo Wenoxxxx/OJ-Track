@@ -37,8 +37,8 @@ export function AppSidebar() {
                   [
                     "flex items-center gap-3 w-full px-3 py-2.5 text-sm font-medium transition-colors",
                     isActive
-                      ? "bg-foreground text-background"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
                   ].join(" ")
                 }
               >
