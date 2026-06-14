@@ -1,0 +1,186 @@
+import { useState } from "react";
+import DashboardLayout from "@/layouts/dashboard-layout";
+import { DashboardHeader } from "@/components/dashboard/dashboard-header";
+import { clients } from "@/data/store";
+import type { Client, DesignStatus, PaymentStatus } from "@/data/store";
+import { ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
+
+const designBadge: Record<DesignStatus, string> = {
+  "Not Started": "bg-rose-500/10 text-rose-500",
+  Pending: "bg-amber-500/10 text-amber-600",
+  Done: "bg-emerald-500/10 text-emerald-600",
+};
+
+const payBadge: Record<PaymentStatus, string> = {
+  "Not Paid": "bg-rose-500/10 text-rose-500",
+  Partial: "bg-amber-500/10 text-amber-600",
+  Paid: "bg-teal-500/10 text-teal-600",
+};
+
+type SortKey = keyof Client;
+type SortDir = "asc" | "desc";
+
+function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
+  if (!active) return <ChevronsUpDown size={13} className="text-muted-foreground/50" />;
+  return dir === "asc" ? (
+    <ChevronUp size={13} className="text-foreground" />
+  ) : (
+    <ChevronDown size={13} className="text-foreground" />
+  );
+}
+
+const columns: { key: SortKey; label: string }[] = [
+  { key: "projectName", label: "Project Name" },
+  { key: "clientName", label: "Client" },
+  { key: "projectType", label: "Type" },
+  { key: "rateAmount", label: "Rate" },
+  { key: "revisionCount", label: "Revisions" },
+  { key: "dateNegotiated", label: "Date" },
+  { key: "designStatus", label: "Design Status" },
+  { key: "paymentStatus", label: "Payment" },
+];
+
+type FilterDesign = "All" | DesignStatus;
+type FilterPayment = "All" | PaymentStatus;
+
+export default function ClientsPage() {
+  const [sortKey, setSortKey] = useState<SortKey>("dateNegotiated");
+  const [sortDir, setSortDir] = useState<SortDir>("desc");
+  const [filterDesign, setFilterDesign] = useState<FilterDesign>("All");
+  const [filterPayment, setFilterPayment] = useState<FilterPayment>("All");
+  const [search, setSearch] = useState("");
+
+  function handleSort(key: SortKey) {
+    if (sortKey === key) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+  }
+
+  const filtered = clients
+    .filter((c) => {
+      const q = search.toLowerCase();
+      const matchSearch =
+        !q ||
+        c.projectName.toLowerCase().includes(q) ||
+        c.clientName.toLowerCase().includes(q) ||
+        c.projectType.toLowerCase().includes(q);
+      const matchDesign = filterDesign === "All" || c.designStatus === filterDesign;
+      const matchPayment = filterPayment === "All" || c.paymentStatus === filterPayment;
+      return matchSearch && matchDesign && matchPayment;
+    })
+    .sort((a, b) => {
+      const av = a[sortKey];
+      const bv = b[sortKey];
+      if (av === bv) return 0;
+      const cmp = av < bv ? -1 : 1;
+      return sortDir === "asc" ? cmp : -cmp;
+    });
+
+  return (
+    <DashboardLayout>
+      <DashboardHeader title="Clients" />
+
+      <main className="p-6 space-y-4">
+        {/* Filters */}
+        <div className="flex flex-wrap gap-3 items-center">
+          <input
+            type="text"
+            placeholder="Search project, client, type…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="border bg-card px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring w-64"
+          />
+
+          <select
+            value={filterDesign}
+            onChange={(e) => setFilterDesign(e.target.value as FilterDesign)}
+            className="border bg-card px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+          >
+            <option value="All">All Design Status</option>
+            <option value="Not Started">Not Started</option>
+            <option value="Pending">Pending</option>
+            <option value="Done">Done</option>
+          </select>
+
+          <select
+            value={filterPayment}
+            onChange={(e) => setFilterPayment(e.target.value as FilterPayment)}
+            className="border bg-card px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+          >
+            <option value="All">All Payment Status</option>
+            <option value="Not Paid">Not Paid</option>
+            <option value="Partial">Partial</option>
+            <option value="Paid">Paid</option>
+          </select>
+
+          <span className="ml-auto text-xs text-muted-foreground">
+            {filtered.length} of {clients.length} records
+          </span>
+        </div>
+
+        {/* Table */}
+        <div className="border bg-card overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="border-b bg-muted/40">
+              <tr>
+                {columns.map(({ key, label }) => (
+                  <th
+                    key={key}
+                    onClick={() => handleSort(key)}
+                    className="text-left px-4 py-3 font-medium text-muted-foreground text-xs uppercase tracking-wide cursor-pointer select-none whitespace-nowrap"
+                  >
+                    <span className="inline-flex items-center gap-1">
+                      {label}
+                      <SortIcon active={sortKey === key} dir={sortDir} />
+                    </span>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {filtered.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="px-4 py-10 text-center text-muted-foreground text-sm">
+                    No records match your filters.
+                  </td>
+                </tr>
+              ) : (
+                filtered.map((c) => (
+                  <tr key={c.id} className="hover:bg-muted/30 transition-colors">
+                    <td className="px-4 py-3 font-medium whitespace-nowrap">{c.projectName}</td>
+                    <td className="px-4 py-3 whitespace-nowrap">{c.clientName}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">{c.projectType}</td>
+                    <td className="px-4 py-3 tabular-nums whitespace-nowrap font-semibold">
+                      ₱{c.rateAmount.toLocaleString()}
+                    </td>
+                    <td className="px-4 py-3 text-center">{c.revisionCount}</td>
+                    <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">
+                      {new Date(c.dateNegotiated).toLocaleDateString("en-PH", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className={`px-2 py-0.5 text-[11px] font-medium ${designBadge[c.designStatus]}`}>
+                        {c.designStatus}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className={`px-2 py-0.5 text-[11px] font-medium ${payBadge[c.paymentStatus]}`}>
+                        {c.paymentStatus}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </DashboardLayout>
+  );
+}

@@ -1,45 +1,100 @@
+import { getStats } from "@/data/store";
 import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
+  DollarSign,
+  Users,
+  Clock,
+  CheckCircle2,
+  AlertCircle,
+  Hourglass,
+  Banknote,
+  BadgeCheck,
+} from "lucide-react";
 
-const stats = [
+const statConfig = [
   {
-    title: "Total Revenue",
-    value: "$12,450",
+    key: "totalSales" as const,
+    label: "Total Revenue",
+    icon: DollarSign,
+    format: (v: number) => `₱${v.toLocaleString()}`,
+    color: "text-emerald-500",
+    bg: "bg-emerald-500/10",
   },
   {
-    title: "Clients",
-    value: "124",
+    key: "totalClients" as const,
+    label: "Total Clients",
+    icon: Users,
+    format: (v: number) => `${v}`,
+    color: "text-blue-500",
+    bg: "bg-blue-500/10",
   },
   {
-    title: "Projects",
-    value: "37",
+    key: "notStarted" as const,
+    label: "Not Started",
+    icon: AlertCircle,
+    format: (v: number) => `${v} projects`,
+    color: "text-rose-500",
+    bg: "bg-rose-500/10",
   },
   {
-    title: "Pending",
-    value: "8",
+    key: "pending" as const,
+    label: "In Progress",
+    icon: Hourglass,
+    format: (v: number) => `${v} projects`,
+    color: "text-amber-500",
+    bg: "bg-amber-500/10",
+  },
+  {
+    key: "done" as const,
+    label: "Completed",
+    icon: CheckCircle2,
+    format: (v: number) => `${v} projects`,
+    color: "text-green-500",
+    bg: "bg-green-500/10",
+  },
+  {
+    key: "payNotPaid" as const,
+    label: "Unpaid",
+    icon: Clock,
+    format: (v: number) => `${v} clients`,
+    color: "text-rose-400",
+    bg: "bg-rose-400/10",
+  },
+  {
+    key: "payPartial" as const,
+    label: "Partial Payment",
+    icon: Banknote,
+    format: (v: number) => `${v} clients`,
+    color: "text-amber-400",
+    bg: "bg-amber-400/10",
+  },
+  {
+    key: "payPaid" as const,
+    label: "Fully Paid",
+    icon: BadgeCheck,
+    format: (v: number) => `${v} clients`,
+    color: "text-teal-500",
+    bg: "bg-teal-500/10",
   },
 ];
 
 export function StatsCards() {
-  return (
-    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-      {stats.map((stat) => (
-        <Card
-          key={stat.title}
-          className="rounded-none"
-        >
-          <CardContent className="p-6">
-            <p className="text-sm opacity-60">
-              {stat.title}
-            </p>
+  const stats = getStats();
 
-            <h2 className="mt-2 text-3xl font-bold">
-              {stat.value}
-            </h2>
-          </CardContent>
-        </Card>
+  return (
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      {statConfig.map(({ key, label, icon: Icon, format, color, bg }) => (
+        <div
+          key={key}
+          className="border bg-card p-5 flex items-start gap-4 hover:shadow-md transition-shadow"
+        >
+          <div className={`p-2 ${bg}`}>
+            <Icon size={18} className={color} />
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wide">{label}</p>
+            <p className="mt-1 text-2xl font-bold">{format(stats[key])}</p>
+          </div>
+        </div>
       ))}
     </div>
   );
