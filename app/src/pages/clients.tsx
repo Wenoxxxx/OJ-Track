@@ -123,14 +123,14 @@ export default function ClientsPage() {
 
         {/* Table */}
         <div className="border bg-card overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-xs">
             <thead className="border-b bg-muted/40">
               <tr>
                 {columns.map(({ key, label }) => (
                   <th
                     key={key}
                     onClick={() => handleSort(key)}
-                    className="text-left px-4 py-3 font-medium text-muted-foreground text-xs uppercase tracking-wide cursor-pointer select-none whitespace-nowrap"
+                    className="text-left px-3 py-2 font-medium text-muted-foreground text-[10px] uppercase tracking-wide cursor-pointer select-none whitespace-nowrap"
                   >
                     <span className="inline-flex items-center gap-1">
                       {label}
@@ -150,27 +150,27 @@ export default function ClientsPage() {
               ) : (
                 filtered.map((c) => (
                   <tr key={c.id} className="hover:bg-muted/30 transition-colors">
-                    <td className="px-4 py-3 font-medium whitespace-nowrap">{c.projectName}</td>
-                    <td className="px-4 py-3 whitespace-nowrap">{c.clientName}</td>
-                    <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">{c.projectType}</td>
-                    <td className="px-4 py-3 tabular-nums whitespace-nowrap font-semibold">
+                    <td className="px-3 py-2 font-medium whitespace-nowrap">{c.projectName}</td>
+                    <td className="px-3 py-2 whitespace-nowrap">{c.clientName}</td>
+                    <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">{c.projectType}</td>
+                    <td className="px-3 py-2 tabular-nums whitespace-nowrap font-semibold">
                       ₱{c.rateAmount.toLocaleString()}
                     </td>
-                    <td className="px-4 py-3 text-center">{c.revisionCount}</td>
-                    <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">
+                    <td className="px-3 py-2 text-center">{c.revisionCount}</td>
+                    <td className="px-3 py-2 text-muted-foreground whitespace-nowrap">
                       {new Date(c.dateNegotiated).toLocaleDateString("en-PH", {
                         year: "numeric",
                         month: "short",
                         day: "numeric",
                       })}
                     </td>
-                    <td className="px-4 py-3">
-                      <span className={`px-2 py-0.5 text-[11px] font-medium ${designBadge[c.designStatus]}`}>
+                    <td className="px-3 py-2">
+                      <span className={`px-1.5 py-0.5 text-[10px] font-medium ${designBadge[c.designStatus]}`}>
                         {c.designStatus}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
-                      <span className={`px-2 py-0.5 text-[11px] font-medium ${payBadge[c.paymentStatus]}`}>
+                    <td className="px-3 py-2">
+                      <span className={`px-1.5 py-0.5 text-[10px] font-medium ${payBadge[c.paymentStatus]}`}>
                         {c.paymentStatus}
                       </span>
                     </td>

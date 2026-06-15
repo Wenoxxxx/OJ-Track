@@ -22,8 +22,8 @@ const navItems = [
 export function AppSidebar() {
   return (
     <Sidebar>
-      <SidebarHeader className="h-16 border-b flex items-center px-6">
-        <span className="font-bold text-lg tracking-tight">OJ-Track</span>
+      <SidebarHeader className="h-14 border-b flex pl-6 pt-4">
+        <span className="font-bold text-lg tracking-tight text-primary">OJ-Track</span>
       </SidebarHeader>
 
       <SidebarContent className="px-4 pt-6">

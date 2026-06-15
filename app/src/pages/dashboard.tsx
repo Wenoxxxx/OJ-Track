@@ -9,7 +9,7 @@ export default function DashboardPage() {
     <DashboardLayout>
       <DashboardHeader title="Dashboard" />
 
-      <main className="p-6 space-y-6">
+      <main className="p-6 pr-10 space-y-6">
         <StatsCards />
 
         <div className="grid gap-6 lg:grid-cols-2">
