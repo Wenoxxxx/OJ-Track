@@ -1,4 +1,3 @@
-import DashboardLayout from "@/layouts/dashboard-layout";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { clients, monthlyClients, getStats } from "@/data/store";
 import type { DesignStatus, PaymentStatus } from "@/data/store";
@@ -51,7 +50,8 @@ const salesByType = Object.entries(
 
 export default function ReportsPage() {
   return (
-    <DashboardLayout>
+    <>
+
       <DashboardHeader title="Reports" />
 
       <main className="p-6 space-y-6">
@@ -188,6 +188,7 @@ export default function ReportsPage() {
           </div>
         </div>
       </main>
-    </DashboardLayout>
+   
+    </>
   );
 }

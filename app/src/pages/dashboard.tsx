@@ -1,4 +1,3 @@
-import DashboardLayout from "@/layouts/dashboard-layout";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { StatsCards } from "@/components/dashboard/stats-cards";
 import { ActivityChart } from "@/components/dashboard/activity-chart";
@@ -6,7 +5,7 @@ import { RecentProjects } from "@/components/dashboard/recent-projects";
 
 export default function DashboardPage() {
   return (
-    <DashboardLayout>
+    <>
       <DashboardHeader title="Dashboard" />
 
       <main className="p-6 pr-10 space-y-6">
@@ -17,6 +16,6 @@ export default function DashboardPage() {
           <RecentProjects />
         </div>
       </main>
-    </DashboardLayout>
+    </>
   );
 }

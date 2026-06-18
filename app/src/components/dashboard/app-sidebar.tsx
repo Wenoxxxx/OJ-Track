@@ -5,6 +5,7 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
+  SidebarMenuButton,
 } from "@/components/ui/sidebar";
 
 import {
@@ -19,7 +20,7 @@ const navItems = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
   { to: "/clients", label: "Clients", icon: Users },
   { to: "/reports", label: "Reports", icon: FileBarChart2 },
-  { to: "/profile", label: "Profile", icon: User }, // 👈 Profile stays with main nav
+  { to: "/profile", label: "Profile", icon: User },
 ];
 
 export function AppSidebar() {
@@ -29,11 +30,12 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar>
-      <SidebarHeader className="h-14 border-b flex items-center pl-6">
-        <span className="font-bold text-lg tracking-tight text-primary">
+    <Sidebar collapsible="icon">
+      <SidebarHeader className="h-14 border-b flex items-center justify-between pl-6 pr-2">
+        <span className="font-bold text-lg tracking-tight text-primary group-data-[collapsible=icon]:hidden">
           OJ-Track
         </span>
+        
       </SidebarHeader>
 
       <SidebarContent className="px-4 pt-4 flex flex-col h-full">
@@ -41,34 +43,37 @@ export function AppSidebar() {
         <SidebarMenu className="space-y-1">
           {navItems.map(({ to, label, icon: Icon }) => (
             <SidebarMenuItem key={to}>
-              <NavLink
-                to={to}
-                end
-                className={({ isActive }) =>
-                  [
-                    "flex items-center gap-3 w-full px-3 py-2 text-sm font-medium rounded-md transition-colors",
-                    isActive
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-                  ].join(" ")
-                }
-              >
-                <Icon size={16} />
-                {label}
-              </NavLink>
+              <SidebarMenuButton asChild tooltip={label}>
+                <NavLink
+                  to={to}
+                  end
+                  className={({ isActive }) =>
+                    [
+                      "flex items-center gap-3 w-full px-3 py-2 text-sm font-medium rounded-md transition-colors",
+                      isActive
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                    ].join(" ")
+                  }
+                >
+                  <Icon size={16} />
+                  <span>{label}</span>
+                </NavLink>
+              </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
 
         {/* Sign Out at bottom (no bullet) */}
         <div className="mt-auto pb-5">
-          <button
+          <SidebarMenuButton
             onClick={handleSignOut}
-            className="flex items-center gap-2.5 w-full px-3 py-2 text-sm font-medium rounded-md text-muted-foreground hover:bg-rose-100 hover:text-rose-700 transition-colors"
+            tooltip="Sign Out"
+            className="text-muted-foreground hover:bg-rose-100 hover:text-rose-700 transition-colors"
           >
             <LogOut size={16} />
-            Sign Out
-          </button>
+            <span>Sign Out</span>
+          </SidebarMenuButton>
         </div>
       </SidebarContent>
     </Sidebar>

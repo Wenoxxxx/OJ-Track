@@ -80,7 +80,7 @@ export default function ClientsPage() {
     });
 
   return (
-    <DashboardLayout>
+    <>
       <DashboardHeader title="Clients" />
 
       <main className="p-6 space-y-4">
@@ -181,6 +181,7 @@ export default function ClientsPage() {
           </table>
         </div>
       </main>
-    </DashboardLayout>
+    </>
+
   );
 }
