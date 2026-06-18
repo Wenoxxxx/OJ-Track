@@ -1,28 +1,19 @@
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/components/ui/sidebar";
-
+import { Outlet } from "react-router-dom";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppSidebar } from "@/components/dashboard/app-sidebar";
 import { CustomScrollbar } from "@/components/ui/custom-scrollbar";
 
-interface DashboardLayoutProps {
-  children: React.ReactNode;
-}
-
-export default function DashboardLayout({
-  children,
-}: DashboardLayoutProps) {
+export default function DashboardLayout() {
   return (
-    <SidebarProvider>
-      <AppSidebar />
-
-      {/* Make SidebarInset a fixed-height scrollable pane so the custom scrollbar works */}
-      <SidebarInset className="h-screen overflow-y-auto overflow-x-hidden">
-        {children}
-      </SidebarInset>
-
-      <CustomScrollbar />
-    </SidebarProvider>
+    <TooltipProvider delayDuration={0}>
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset className="h-screen overflow-y-auto overflow-x-hidden">
+          <Outlet />
+        </SidebarInset>
+        <CustomScrollbar />
+      </SidebarProvider>
+    </TooltipProvider>
   );
 }
