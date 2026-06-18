@@ -83,7 +83,7 @@ export default function ReportsPage() {
                   tickFormatter={(v) => `₱${(v / 1000).toFixed(0)}k`}
                 />
                 <Tooltip
-                  formatter={(v: number) => [`₱${v.toLocaleString()}`, "Sales"]}
+                  formatter={(v) => [`₱${Number(v).toLocaleString()}`, "Sales"]}
                   contentStyle={{
                     fontSize: 12,
                     border: "1px solid hsl(var(--border))",
@@ -141,10 +141,14 @@ export default function ReportsPage() {
                   tickFormatter={(v) => `₱${(v / 1000).toFixed(0)}k`}
                 />
                 <YAxis type="category" dataKey="type" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} width={80} />
-                <Tooltip
-                  formatter={(v: number) => [`₱${v.toLocaleString()}`, "Sales"]}
-                  contentStyle={{ fontSize: 12, border: "1px solid hsl(var(--border))", background: "hsl(var(--card))" }}
-                />
+                  <Tooltip
+                    formatter={(v) => [`₱${Number(v).toLocaleString()}`, "Sales"]}
+                    contentStyle={{
+                      fontSize: 12,
+                      border: "1px solid hsl(var(--border))",
+                      background: "hsl(var(--card))",
+                    }}
+                  />
                 <Bar dataKey="sales" fill="hsl(150 60% 45%)" maxBarSize={22} />
               </BarChart>
             </ResponsiveContainer>
