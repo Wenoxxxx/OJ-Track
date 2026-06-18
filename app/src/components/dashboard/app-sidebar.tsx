@@ -23,23 +23,43 @@ const navItems = [
   { to: "/profile", label: "Profile", icon: User },
 ];
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  className?: string;
+}
+
+export function AppSidebar({ className }: AppSidebarProps) {
   const handleSignOut = () => {
-    // Replace with your auth logic
     console.log("Signing out...");
   };
 
   return (
-    <Sidebar collapsible="icon">
-      <SidebarHeader className="h-14 border-b flex items-center justify-between pl-6 pr-2">
-        <span className="font-bold text-lg tracking-tight text-primary group-data-[collapsible=icon]:hidden">
+    <Sidebar
+      collapsible="icon"
+      className={`transition-[width] duration-300 ease-in-out ${className ?? ""}`}
+    >
+      {/* Header with dynamic padding */}
+      <SidebarHeader
+        className="
+          h-14 border-b flex items-center justify-between
+          transition-[padding] duration-300 ease-in-out
+          group-data-[collapsible=icon]:pl-2 group-data-[collapsible=expanded]:pl-6
+          group-data-[collapsible=icon]:pr-1 group-data-[collapsible=expanded]:pr-2
+        "
+      >
+        <span className="font-bold text-lg tracking-tight text-primary transition-opacity duration-300 ease-in-out group-data-[collapsible=icon]:opacity-0">
           OJ-Track
         </span>
-        
       </SidebarHeader>
 
-      <SidebarContent className="px-4 pt-4 flex flex-col h-full">
-        {/* Main nav items */}
+      {/* Content with dynamic padding */}
+      <SidebarContent
+        className="
+          px-4 pt-4 flex flex-col h-full
+          transition-[padding] duration-300 ease-in-out
+          group-data-[collapsible=icon]:px-2   /* collapsed content padding */
+          group-data-[collapsible=expanded]:px-6 /* expanded content padding */
+        "
+      >
         <SidebarMenu className="space-y-1">
           {navItems.map(({ to, label, icon: Icon }) => (
             <SidebarMenuItem key={to}>
@@ -49,7 +69,11 @@ export function AppSidebar() {
                   end
                   className={({ isActive }) =>
                     [
-                      "flex items-center gap-3 w-full px-3 py-2 text-sm font-medium rounded-md transition-colors",
+                      "flex items-center gap-3 py-2 text-sm font-medium rounded-md transition-all duration-300 ease-in-out",
+                      // Expanded: full width, normal padding
+                      "group-data-[collapsible=expanded]:w-full group-data-[collapsible=expanded]:px-6",
+                      // Collapsed: fixed adjustable width via CSS var, centered, no padding/gap needed
+                      "group-data-[collapsible=icon]:w-[var(--sidebar-icon-bg-width)] group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:px-0",
                       isActive
                         ? "bg-primary text-primary-foreground"
                         : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
@@ -57,22 +81,43 @@ export function AppSidebar() {
                   }
                 >
                   <Icon size={16} />
-                  <span>{label}</span>
+                  <span
+                    className="
+                      transition-all duration-300 ease-in-out overflow-hidden
+                      group-data-[collapsible=icon]:opacity-0
+                      group-data-[collapsible=icon]:w-0
+                    "
+                  >
+                    {label}
+                  </span>
                 </NavLink>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
 
-        {/* Sign Out at bottom (no bullet) */}
-        <div className="mt-auto pb-5">
+        {/* Sign Out button with dynamic padding */}
+        <div className="mt-auto pb-5 group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center">
           <SidebarMenuButton
             onClick={handleSignOut}
             tooltip="Sign Out"
-            className="text-muted-foreground hover:bg-rose-100 hover:text-rose-700 transition-colors"
+            className="
+              text-muted-foreground hover:bg-rose-100 hover:text-rose-700
+              transition-all duration-300 ease-in-out
+              group-data-[collapsible=expanded]:w-full group-data-[collapsible=expanded]:px-6
+              group-data-[collapsible=icon]:w-[var(--sidebar-icon-bg-width)] group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:px-0
+            "
           >
             <LogOut size={16} />
-            <span>Sign Out</span>
+            <span
+              className="
+                transition-all duration-300 ease-in-out overflow-hidden
+                group-data-[collapsible=icon]:opacity-0
+                group-data-[collapsible=icon]:w-0
+              "
+            >
+              Sign Out
+            </span>
           </SidebarMenuButton>
         </div>
       </SidebarContent>
