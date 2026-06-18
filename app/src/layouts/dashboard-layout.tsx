@@ -7,11 +7,23 @@ import { CustomScrollbar } from "@/components/ui/custom-scrollbar";
 export default function DashboardLayout() {
   return (
     <TooltipProvider delayDuration={0}>
-      <SidebarProvider>
-        <AppSidebar />
-        <SidebarInset className="h-screen overflow-y-auto overflow-x-hidden">
+      {/* Make the whole layout a "group" so we can target collapse state */}
+      <SidebarProvider className="group">
+        {/* Sidebar with animated width */}
+        <AppSidebar className="transition-[width] duration-300 ease-in-out" />
+
+        {/* Inset content with animated margin/padding */}
+        <SidebarInset
+          className="
+            h-screen overflow-y-auto overflow-x-hidden
+            transition-[margin,padding] duration-300 ease-in-out
+            group-data-[collapsible=icon]:ml-16
+            group-data-[collapsible=expanded]:ml-64
+          "
+        >
           <Outlet />
         </SidebarInset>
+
         <CustomScrollbar />
       </SidebarProvider>
     </TooltipProvider>
