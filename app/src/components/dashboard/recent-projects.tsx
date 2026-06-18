@@ -20,7 +20,7 @@ const payBadge: Record<PaymentStatus, string> = {
 export function RecentProjects() {
   return (
     <div className="border bg-card p-6">
-      <h3 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground mb-4">
+      <h3 className="font-bold text-sm uppercase tracking-wide text-primary text-bold mb-4">
         Recent Projects
       </h3>
 

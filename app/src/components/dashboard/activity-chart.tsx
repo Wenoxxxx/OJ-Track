@@ -13,7 +13,7 @@ import { monthlyClients } from "@/data/store";
 export function ActivityChart() {
   return (
     <div className="border bg-card p-6">
-      <h3 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground mb-1">
+      <h3 className="font-bold text-sm uppercase tracking-wide text-primary mb-1">
         Monthly Activity
       </h3>
       <p className="text-xs text-muted-foreground mb-6">

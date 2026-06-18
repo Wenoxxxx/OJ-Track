@@ -85,13 +85,13 @@ export function StatsCards() {
       {statConfig.map(({ key, label, icon: Icon, format, color, bg }) => (
         <div
           key={key}
-          className="border bg-card p-5 flex items-start gap-4 hover:shadow-md transition-shadow"
+          className="border bg-card p-5 flex items-start gap-4"
         >
           <div className={`p-2 ${bg}`}>
             <Icon size={18} className={color} />
           </div>
           <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wide">{label}</p>
+            <p className="font-bold text-xs uppercase tracking-wide text-primary">{label}</p>
             <p className="mt-1 text-2xl font-bold">{format(stats[key])}</p>
           </div>
         </div>
