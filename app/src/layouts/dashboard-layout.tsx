@@ -17,8 +17,6 @@ export default function DashboardLayout() {
           className="
             h-screen overflow-y-auto overflow-x-hidden
             transition-[margin,padding] duration-300 ease-in-out
-            group-data-[collapsible=icon]:ml-16
-            group-data-[collapsible=expanded]:ml-64
           "
         >
           <Outlet />

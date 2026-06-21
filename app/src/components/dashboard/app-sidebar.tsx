@@ -40,15 +40,37 @@ export function AppSidebar({ className }: AppSidebarProps) {
       {/* Header with dynamic padding */}
       <SidebarHeader
         className="
-          h-14 border-b flex items-center justify-between
+          h-14 border-b flex items-center justify-start
           transition-[padding] duration-300 ease-in-out
           group-data-[collapsible=icon]:pl-2 group-data-[collapsible=expanded]:pl-6
           group-data-[collapsible=icon]:pr-1 group-data-[collapsible=expanded]:pr-2
         "
       >
-        <span className="font-bold text-lg tracking-tight text-primary transition-opacity duration-300 ease-in-out group-data-[collapsible=icon]:opacity-0">
-          OJ-Track
-        </span>
+        <div className="relative h-8 w-8 shrink-0">
+          {/* Full logo when expanded */}
+          <img
+            src="/oj-track.png"
+            alt="OJ-Track Logo"
+            className="
+              absolute inset-0 h-8 w-auto max-w-none object-contain
+              transition-opacity duration-300 ease-in-out
+              opacity-100
+              group-data-[collapsible=icon]:opacity-0
+            "
+          />
+
+          {/* Compact icon when collapsed */}
+          <img
+            src="/oj-icon.png"
+            alt="OJ-Track Icon"
+            className="
+              absolute inset-0 h-8 w-8 object-contain
+              transition-opacity duration-300 ease-in-out
+              opacity-0
+              group-data-[collapsible=icon]:opacity-100
+            "
+          />
+        </div>
       </SidebarHeader>
 
       {/* Content with dynamic padding */}
