@@ -40,7 +40,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
       {/* Header with dynamic padding */}
       <SidebarHeader
         className="
-          h-14 border-b flex items-center justify-start
+          h-14 border-b flex items-center
           transition-[padding] duration-300 ease-in-out
           group-data-[collapsible=icon]:pl-2 group-data-[collapsible=expanded]:pl-6
           group-data-[collapsible=icon]:pr-1 group-data-[collapsible=expanded]:pr-2
@@ -52,10 +52,10 @@ export function AppSidebar({ className }: AppSidebarProps) {
             src="/oj-track.png"
             alt="OJ-Track Logo"
             className="
-              absolute inset-0 h-8 w-auto max-w-none object-contain
+              absolute inset-y-0 -left-17 h-8 w-auto max-w-none object-contain mt-2
               transition-opacity duration-300 ease-in-out
               opacity-100
-              group-data-[collapsible=icon]:opacity-0
+              group-data-[collapsible=icon]:opacity-0 
             "
           />
 
@@ -65,7 +65,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
             alt="OJ-Track Icon"
             className="
               absolute inset-0 h-8 w-8 object-contain
-              transition-opacity duration-300 ease-in-out
+              transition-opacity duration-300 ease-in-out mt-1
               opacity-0
               group-data-[collapsible=icon]:opacity-100
             "
