@@ -1,20 +1,20 @@
+// src/pages/clients.tsx
 import { useState } from "react";
-import DashboardLayout from "@/layouts/dashboard-layout";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
-import { clients } from "@/data/store";
+import { useClients } from "@/hooks/useClients";
 import type { Client, DesignStatus, PaymentStatus } from "@/data/store";
 import { ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
 
 const designBadge: Record<DesignStatus, string> = {
   "Not Started": "bg-rose-500/10 text-rose-500",
-  Pending: "bg-amber-500/10 text-amber-600",
-  Done: "bg-emerald-500/10 text-emerald-600",
+  Pending:       "bg-amber-500/10 text-amber-600",
+  Done:          "bg-emerald-500/10 text-emerald-600",
 };
 
 const payBadge: Record<PaymentStatus, string> = {
   "Not Paid": "bg-rose-500/10 text-rose-500",
-  Partial: "bg-amber-500/10 text-amber-600",
-  Paid: "bg-teal-500/10 text-teal-600",
+  Partial:    "bg-amber-500/10 text-amber-600",
+  Paid:       "bg-teal-500/10 text-teal-600",
 };
 
 type SortKey = keyof Client;
@@ -22,33 +22,33 @@ type SortDir = "asc" | "desc";
 
 function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
   if (!active) return <ChevronsUpDown size={13} className="text-muted-foreground/50" />;
-  return dir === "asc" ? (
-    <ChevronUp size={13} className="text-foreground" />
-  ) : (
-    <ChevronDown size={13} className="text-foreground" />
-  );
+  return dir === "asc"
+    ? <ChevronUp   size={13} className="text-foreground" />
+    : <ChevronDown size={13} className="text-foreground" />;
 }
 
 const columns: { key: SortKey; label: string }[] = [
-  { key: "projectName", label: "Project Name" },
-  { key: "clientName", label: "Client" },
-  { key: "projectType", label: "Type" },
-  { key: "rateAmount", label: "Rate" },
-  { key: "revisionCount", label: "Revisions" },
-  { key: "dateNegotiated", label: "Date" },
-  { key: "designStatus", label: "Design Status" },
-  { key: "paymentStatus", label: "Payment" },
+  { key: "projectName",   label: "Project Name" },
+  { key: "clientName",    label: "Client"        },
+  { key: "projectType",   label: "Type"          },
+  { key: "rateAmount",    label: "Rate"          },
+  { key: "revisionCount", label: "Revisions"     },
+  { key: "dateNegotiated",label: "Date"          },
+  { key: "designStatus",  label: "Design Status" },
+  { key: "paymentStatus", label: "Payment"       },
 ];
 
-type FilterDesign = "All" | DesignStatus;
+type FilterDesign  = "All" | DesignStatus;
 type FilterPayment = "All" | PaymentStatus;
 
 export default function ClientsPage() {
-  const [sortKey, setSortKey] = useState<SortKey>("dateNegotiated");
-  const [sortDir, setSortDir] = useState<SortDir>("desc");
+  const { data: clients, loading, error } = useClients();
+
+  const [sortKey,      setSortKey]      = useState<SortKey>("dateNegotiated");
+  const [sortDir,      setSortDir]      = useState<SortDir>("desc");
   const [filterDesign, setFilterDesign] = useState<FilterDesign>("All");
-  const [filterPayment, setFilterPayment] = useState<FilterPayment>("All");
-  const [search, setSearch] = useState("");
+  const [filterPayment,setFilterPayment]= useState<FilterPayment>("All");
+  const [search,       setSearch]       = useState("");
 
   function handleSort(key: SortKey) {
     if (sortKey === key) {
@@ -67,7 +67,7 @@ export default function ClientsPage() {
         c.projectName.toLowerCase().includes(q) ||
         c.clientName.toLowerCase().includes(q) ||
         c.projectType.toLowerCase().includes(q);
-      const matchDesign = filterDesign === "All" || c.designStatus === filterDesign;
+      const matchDesign  = filterDesign  === "All" || c.designStatus  === filterDesign;
       const matchPayment = filterPayment === "All" || c.paymentStatus === filterPayment;
       return matchSearch && matchDesign && matchPayment;
     })
@@ -117,9 +117,16 @@ export default function ClientsPage() {
           </select>
 
           <span className="ml-auto text-xs text-muted-foreground">
-            {filtered.length} of {clients.length} records
+            {loading ? "Loading…" : `${filtered.length} of ${clients.length} records`}
           </span>
         </div>
+
+        {/* Error */}
+        {error && (
+          <div className="border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-600 rounded">
+            Failed to load projects: {error}
+          </div>
+        )}
 
         {/* Table */}
         <div className="border bg-card overflow-x-auto">
@@ -141,7 +148,17 @@ export default function ClientsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {filtered.length === 0 ? (
+              {loading ? (
+                Array.from({ length: 6 }).map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    {Array.from({ length: 8 }).map((_, j) => (
+                      <td key={j} className="px-3 py-3">
+                        <div className="h-3 bg-muted/40 rounded w-full" />
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              ) : filtered.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="px-4 py-10 text-center text-muted-foreground text-sm">
                     No records match your filters.
@@ -159,9 +176,7 @@ export default function ClientsPage() {
                     <td className="px-3 py-2 text-center">{c.revisionCount}</td>
                     <td className="px-3 py-2 text-muted-foreground whitespace-nowrap">
                       {new Date(c.dateNegotiated).toLocaleDateString("en-PH", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
+                        year: "numeric", month: "short", day: "numeric",
                       })}
                     </td>
                     <td className="px-3 py-2">
@@ -182,6 +197,5 @@ export default function ClientsPage() {
         </div>
       </main>
     </>
-
   );
 }
