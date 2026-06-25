@@ -56,9 +56,9 @@ export default function ReportsPage() {
     <>
       <DashboardHeader title="Reports" />
 
-      <main className="p-6 space-y-6">
+      <main className="p-4 sm:p-6 space-y-4 sm:space-y-6">
         {/* Summary KPIs */}
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2.5 sm:gap-4 xl:grid-cols-4">
           {sLoad
             ? Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className="border bg-card p-5">
@@ -78,7 +78,7 @@ export default function ReportsPage() {
         </div>
 
         {/* Charts row */}
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid gap-4 sm:gap-6 lg:grid-cols-3">
           {/* Monthly Sales Bar */}
           <div className="lg:col-span-2 border bg-card p-6">
             <h3 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground mb-4">
@@ -133,7 +133,7 @@ export default function ReportsPage() {
         </div>
 
         {/* Bottom row */}
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
           {/* Sales by project type */}
           <div className="border bg-card p-6">
             <h3 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground mb-4">

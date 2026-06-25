@@ -11,8 +11,8 @@ export function DashboardHeader({ title = "Dashboard" }: DashboardHeaderProps) {
   const { toggleSidebar, open } = useSidebar();
 
   return (
-    <header className="h-14 border-b px-4 pr-10 flex items-center justify-between gap-4 sticky top-0 bg-background z-[110] pb-10">
-      <div className="flex items-center gap-3 pt-10">
+    <header className="h-14 border-b px-3 sm:px-4 sm:pr-10 flex items-center justify-between gap-4 sticky top-0 bg-background z-[110]">
+      <div className="flex items-center gap-3 pt-10  pb-10">
         <button
           onClick={toggleSidebar}
           className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors rounded-md"
@@ -30,11 +30,11 @@ export function DashboardHeader({ title = "Dashboard" }: DashboardHeaderProps) {
             />
           </span>
         </button>
-        <h2 className="font-bold text-m text-primary">{title}</h2>
+        <h2 className="font-bold text-m text-primary ">{title}</h2>
       </div>
 
       <Link to="/profile">
-        <Avatar className="h-8 w-8 mt-10">
+        <Avatar className="h-8 w-8">
           <AvatarFallback className="text-xs">OJ</AvatarFallback>
         </Avatar>
       </Link>

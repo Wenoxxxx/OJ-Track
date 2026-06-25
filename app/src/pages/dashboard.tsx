@@ -8,10 +8,10 @@ export default function DashboardPage() {
     <>
       <DashboardHeader title="Dashboard" />
 
-      <main className="p-6 pr-10 space-y-6">
+      <main className="p-4 sm:p-6 sm:pr-10 space-y-4 sm:space-y-6">
         <StatsCards />
 
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
           <ActivityChart />
           <RecentProjects />
         </div>
