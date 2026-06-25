@@ -21,13 +21,13 @@ export function StatsCards() {
 
   if (loading) {
     return (
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2.5 sm:gap-4 xl:grid-cols-4">
         {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="border bg-card p-5 flex items-start gap-4 animate-pulse">
-            <div className="p-2 bg-muted/40 rounded w-9 h-9" />
-            <div className="flex-1 space-y-2 pt-0.5">
+          <div key={i} className="border bg-card p-3 sm:p-5 flex items-start gap-3 sm:gap-4 animate-pulse">
+            <div className="p-1.5 sm:p-2 bg-muted/40 rounded w-7 h-7 sm:w-9 sm:h-9 shrink-0" />
+            <div className="flex-1 space-y-2 pt-0.5 min-w-0">
               <div className="h-2 bg-muted/40 rounded w-2/3" />
-              <div className="h-6 bg-muted/40 rounded w-1/2" />
+              <div className="h-5 bg-muted/40 rounded w-1/2" />
             </div>
           </div>
         ))}
@@ -44,15 +44,16 @@ export function StatsCards() {
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid grid-cols-2 gap-2.5 sm:gap-4 xl:grid-cols-4">
       {statConfig.map(({ key, label, icon: Icon, format, color, bg }) => (
-        <div key={key} className="border bg-card p-5 flex items-start gap-4">
-          <div className={`p-2 ${bg}`}>
-            <Icon size={18} className={color} />
+        <div key={key} className="border bg-card p-3 sm:p-5 flex items-start gap-2.5 sm:gap-4">
+          <div className={`p-1.5 sm:p-2 ${bg} shrink-0`}>
+            <Icon size={15} className={`${color} sm:hidden`} />
+            <Icon size={18} className={`${color} hidden sm:block`} />
           </div>
-          <div>
-            <p className="font-bold text-xs uppercase tracking-wide text-primary">{label}</p>
-            <p className="mt-1 text-2xl font-bold">{format(stats[key])}</p>
+          <div className="min-w-0">
+            <p className="font-bold text-[10px] sm:text-xs uppercase tracking-wide text-primary leading-tight">{label}</p>
+            <p className="mt-0.5 sm:mt-1 text-lg sm:text-2xl font-bold truncate">{format(stats[key])}</p>
           </div>
         </div>
       ))}

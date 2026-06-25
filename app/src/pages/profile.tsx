@@ -9,7 +9,7 @@ export default function ProfilePage() {
   return (
     <>
       <DashboardHeader title="Profile" />
-      <main className="p-6 pr-10 space-y-6">
+      <main className="p-4 sm:p-6 sm:pr-10 space-y-6">
         {loading && (
           <div className="flex items-center gap-4 animate-pulse">
             <div className="h-16 w-16 rounded-full bg-muted/40" />

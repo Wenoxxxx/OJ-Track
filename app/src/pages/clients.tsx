@@ -83,40 +83,42 @@ export default function ClientsPage() {
     <>
       <DashboardHeader title="Clients" />
 
-      <main className="p-6 space-y-4">
+      <main className="p-4 sm:p-6 space-y-4">
         {/* Filters */}
-        <div className="flex flex-wrap gap-3 items-center">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-3 sm:items-center">
           <input
             type="text"
             placeholder="Search project, client, type…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="border bg-card px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring w-64"
+            className="border bg-card px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring w-full sm:w-64"
           />
 
-          <select
-            value={filterDesign}
-            onChange={(e) => setFilterDesign(e.target.value as FilterDesign)}
-            className="border bg-card px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-          >
-            <option value="All">All Design Status</option>
-            <option value="Not Started">Not Started</option>
-            <option value="Pending">Pending</option>
-            <option value="Done">Done</option>
-          </select>
+          <div className="flex gap-2">
+            <select
+              value={filterDesign}
+              onChange={(e) => setFilterDesign(e.target.value as FilterDesign)}
+              className="border bg-card px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring flex-1 sm:flex-none"
+            >
+              <option value="All">All Design</option>
+              <option value="Not Started">Not Started</option>
+              <option value="Pending">Pending</option>
+              <option value="Done">Done</option>
+            </select>
 
-          <select
-            value={filterPayment}
-            onChange={(e) => setFilterPayment(e.target.value as FilterPayment)}
-            className="border bg-card px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-          >
-            <option value="All">All Payment Status</option>
-            <option value="Not Paid">Not Paid</option>
-            <option value="Partial">Partial</option>
-            <option value="Paid">Paid</option>
-          </select>
+            <select
+              value={filterPayment}
+              onChange={(e) => setFilterPayment(e.target.value as FilterPayment)}
+              className="border bg-card px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring flex-1 sm:flex-none"
+            >
+              <option value="All">All Payment</option>
+              <option value="Not Paid">Not Paid</option>
+              <option value="Partial">Partial</option>
+              <option value="Paid">Paid</option>
+            </select>
+          </div>
 
-          <span className="ml-auto text-xs text-muted-foreground">
+          <span className="text-xs text-muted-foreground sm:ml-auto">
             {loading ? "Loading…" : `${filtered.length} of ${clients.length} records`}
           </span>
         </div>

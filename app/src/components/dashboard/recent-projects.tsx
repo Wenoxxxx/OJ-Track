@@ -48,12 +48,12 @@ export function RecentProjects() {
       {!loading && !error && (
         <div className="divide-y divide-border">
           {data.map((c) => (
-            <div key={c.id} className="py-3 flex items-center justify-between gap-4">
-              <div className="min-w-0">
+            <div key={c.id} className="py-3 flex items-start sm:items-center justify-between gap-3 flex-wrap sm:flex-nowrap">
+              <div className="min-w-0 flex-1">
                 <p className="font-medium text-sm truncate">{c.projectName}</p>
                 <p className="text-xs text-muted-foreground">{c.clientName} · {c.projectType}</p>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
                 <span className={`text-[11px] px-2 py-0.5 font-medium ${designBadge[c.designStatus as DesignStatus]}`}>
                   {c.designStatus}
                 </span>
