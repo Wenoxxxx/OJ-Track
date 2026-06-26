@@ -314,4 +314,3 @@ GROUP BY p.user_id,
          MONTH(p.date_negotiated),
          DATE_FORMAT(p.date_negotiated, '%b')
 ORDER BY year, month_num;
-
