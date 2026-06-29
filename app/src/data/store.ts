@@ -16,4 +16,5 @@ export interface Client {
   dateNegotiated: string; // ISO date string YYYY-MM-DD
   designStatus:   DesignStatus;
   paymentStatus:  PaymentStatus;
+  isArchived:     boolean;
 }

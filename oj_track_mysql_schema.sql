@@ -131,7 +131,10 @@ CREATE TABLE projects (
     design_status_id    SMALLINT UNSIGNED NOT NULL DEFAULT 1,  -- 'Not Started'
     payment_status_id   SMALLINT UNSIGNED NOT NULL DEFAULT 1,  -- 'Not Paid'
 
-    -- Soft delete / audit
+    -- Soft delete flag (archive before hard-delete)
+    is_archived         TINYINT(1)      NOT NULL DEFAULT 0,
+
+    -- Audit
     created_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 

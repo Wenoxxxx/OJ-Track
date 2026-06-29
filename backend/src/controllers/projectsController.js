@@ -4,32 +4,49 @@ require("dotenv").config();
 
 const USER_ID = process.env.OWNER_USER_ID || "00000000-0000-0000-0000-000000000001";
 
-// GET /api/projects
-// Feeds: Clients page table — uses v_clients_list view
+// ── Shared row mapper ────────────────────────────────────────
+function mapRow(r) {
+  return {
+    id:             r.project_id,
+    projectName:    r.project_name,
+    clientName:     r.client_name,
+    projectType:    r.project_type,
+    rateAmount:     Number(r.rate_amount),
+    revisionCount:  Number(r.revision_count),
+    dateNegotiated: typeof r.date_negotiated === "string"
+      ? r.date_negotiated
+      : r.date_negotiated?.toISOString().split("T")[0],
+    designStatus:   r.design_status,
+    paymentStatus:  r.payment_status,
+    isArchived:     Boolean(r.is_archived),
+  };
+}
+
+// GET /api/projects  — active only
 async function getProjects(req, res) {
   try {
     const [rows] = await pool.query(
-      `SELECT * FROM v_clients_list WHERE user_id = ? ORDER BY date_negotiated DESC`,
+      `SELECT * FROM v_clients_list WHERE user_id = ? AND is_archived = 0 ORDER BY date_negotiated DESC`,
       [USER_ID]
     );
-    res.json(
-      rows.map((r) => ({
-        id:            r.project_id,
-        projectName:   r.project_name,
-        clientName:    r.client_name,
-        projectType:   r.project_type,
-        rateAmount:    Number(r.rate_amount),
-        revisionCount: Number(r.revision_count),
-        dateNegotiated: typeof r.date_negotiated === "string"
-          ? r.date_negotiated
-          : r.date_negotiated?.toISOString().split("T")[0],
-        designStatus:  r.design_status,
-        paymentStatus: r.payment_status,
-      }))
-    );
+    res.json(rows.map(mapRow));
   } catch (err) {
     console.error("[projects/list]", err);
     res.status(500).json({ error: "Failed to load projects" });
+  }
+}
+
+// GET /api/projects/archived  — archived only
+async function getArchivedProjects(req, res) {
+  try {
+    const [rows] = await pool.query(
+      `SELECT * FROM v_clients_list WHERE user_id = ? AND is_archived = 1 ORDER BY updated_at DESC`,
+      [USER_ID]
+    );
+    res.json(rows.map(mapRow));
+  } catch (err) {
+    console.error("[projects/archived]", err);
+    res.status(500).json({ error: "Failed to load archived projects" });
   }
 }
 
@@ -66,7 +83,7 @@ async function createProject(req, res) {
       return res.status(400).json({ error: "Invalid projectType, designStatus, or paymentStatus value" });
     }
 
-    const [result] = await conn.query(
+    await conn.query(
       `INSERT INTO projects
          (user_id, client_id, project_name, project_type_id,
           rate_amount, revision_count, date_negotiated,
@@ -81,31 +98,13 @@ async function createProject(req, res) {
 
     await conn.commit();
 
-    // Return fresh record
-    const [[fresh]] = await conn.query(
-      `SELECT * FROM v_clients_list WHERE project_id = ?`,
-      [result.insertId]   // won't match — UUID auto-generated; use last insert
-    );
-
-    // Re-fetch by name (fallback since UUID is auto)
+    // Re-fetch the freshly created row
     const [newRows] = await conn.query(
-      `SELECT * FROM v_clients_list WHERE user_id = ? AND project_name = ? ORDER BY date_negotiated DESC LIMIT 1`,
+      `SELECT * FROM v_clients_list WHERE user_id = ? AND project_name = ? AND is_archived = 0 ORDER BY created_at DESC LIMIT 1`,
       [USER_ID, projectName]
     );
     const nr = newRows[0];
-    res.status(201).json({
-      id:            nr?.project_id,
-      projectName:   nr?.project_name,
-      clientName:    nr?.client_name,
-      projectType:   nr?.project_type,
-      rateAmount:    Number(nr?.rate_amount),
-      revisionCount: Number(nr?.revision_count),
-      dateNegotiated: typeof nr?.date_negotiated === "string"
-        ? nr.date_negotiated
-        : nr?.date_negotiated?.toISOString().split("T")[0],
-      designStatus:  nr?.design_status,
-      paymentStatus: nr?.payment_status,
-    });
+    res.status(201).json(mapRow(nr));
   } catch (err) {
     await conn.rollback();
     console.error("[projects/create]", err);
@@ -153,7 +152,37 @@ async function updateProject(req, res) {
   }
 }
 
-// DELETE /api/projects/:id
+// PATCH /api/projects/:id/archive  — soft delete
+async function archiveProject(req, res) {
+  const { id } = req.params;
+  try {
+    await pool.query(
+      `UPDATE projects SET is_archived = 1 WHERE id = ? AND user_id = ?`,
+      [id, USER_ID]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    console.error("[projects/archive]", err);
+    res.status(500).json({ error: "Failed to archive project" });
+  }
+}
+
+// PATCH /api/projects/:id/unarchive  — restore from archive
+async function unarchiveProject(req, res) {
+  const { id } = req.params;
+  try {
+    await pool.query(
+      `UPDATE projects SET is_archived = 0 WHERE id = ? AND user_id = ?`,
+      [id, USER_ID]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    console.error("[projects/unarchive]", err);
+    res.status(500).json({ error: "Failed to restore project" });
+  }
+}
+
+// DELETE /api/projects/:id  — hard delete (only safe after archiving)
 async function deleteProject(req, res) {
   const { id } = req.params;
   try {
@@ -168,4 +197,49 @@ async function deleteProject(req, res) {
   }
 }
 
-module.exports = { getProjects, createProject, updateProject, deleteProject };
+// PATCH /api/projects/:id/status
+// Body: { designStatus? , paymentStatus? }
+async function patchProjectStatus(req, res) {
+  const { id } = req.params;
+  const { designStatus, paymentStatus } = req.body;
+
+  try {
+    if (designStatus !== undefined) {
+      const [[dsRow]] = await pool.query(
+        `SELECT id FROM design_statuses WHERE name = ?`, [designStatus]
+      );
+      if (!dsRow) return res.status(400).json({ error: "Invalid designStatus" });
+      await pool.query(
+        `UPDATE projects SET design_status_id = ? WHERE id = ? AND user_id = ?`,
+        [dsRow.id, id, USER_ID]
+      );
+    }
+
+    if (paymentStatus !== undefined) {
+      const [[psRow]] = await pool.query(
+        `SELECT id FROM payment_statuses WHERE name = ?`, [paymentStatus]
+      );
+      if (!psRow) return res.status(400).json({ error: "Invalid paymentStatus" });
+      await pool.query(
+        `UPDATE projects SET payment_status_id = ? WHERE id = ? AND user_id = ?`,
+        [psRow.id, id, USER_ID]
+      );
+    }
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("[projects/patch-status]", err);
+    res.status(500).json({ error: "Failed to update status" });
+  }
+}
+
+module.exports = {
+  getProjects,
+  getArchivedProjects,
+  createProject,
+  updateProject,
+  archiveProject,
+  unarchiveProject,
+  deleteProject,
+  patchProjectStatus,
+};
