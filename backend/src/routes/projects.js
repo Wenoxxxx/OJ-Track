@@ -2,16 +2,31 @@
 const express = require("express");
 const {
   getProjects,
+  getArchivedProjects,
   createProject,
   updateProject,
+  archiveProject,
+  unarchiveProject,
   deleteProject,
+  patchProjectStatus,
 } = require("../controllers/projectsController");
 
 const router = express.Router();
 
-router.get("/",     getProjects);
-router.post("/",    createProject);
-router.put("/:id",  updateProject);
-router.delete("/:id", deleteProject);
+// Active projects
+router.get("/",               getProjects);
+router.post("/",              createProject);
+router.put("/:id",            updateProject);
+
+// Status cycling
+router.patch("/:id/status",   patchProjectStatus);
+
+// Archive lifecycle
+router.get("/archived",           getArchivedProjects);
+router.patch("/:id/archive",      archiveProject);
+router.patch("/:id/unarchive",    unarchiveProject);
+
+// Hard delete (archived only)
+router.delete("/:id",         deleteProject);
 
 module.exports = router;
