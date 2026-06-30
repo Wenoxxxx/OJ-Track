@@ -2,7 +2,9 @@
 const pool = require("../config/db");
 require("dotenv").config();
 
-const USER_ID = process.env.OWNER_USER_ID || "00000000-0000-0000-0000-000000000001";
+// users.id is INT AUTO_INCREMENT in the schema, not a UUID — keep this numeric.
+// Falls back to 1, matching the seeded "Owen M. Jerusalem" user.
+const USER_ID = Number(process.env.OWNER_USER_ID) || 1;
 
 // GET /api/dashboard/stats
 // Feeds: StatsCards component

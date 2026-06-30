@@ -2,7 +2,7 @@
 const pool = require("../config/db");
 require("dotenv").config();
 
-const USER_ID = process.env.OWNER_USER_ID || "00000000-0000-0000-0000-000000000001";
+const USER_ID = process.env.OWNER_USER_ID || 1;
 
 // GET /api/reports/stats
 // Feeds: Reports page summary KPIs + pie charts

@@ -1,13 +1,13 @@
 -- =============================================================================
 -- OJ-Track Database Schema (MySQL 8.0+)
 -- Generated from: Dashboard, Clients, Reports, and Profile pages
--- Database:       MySQL 8.0+ (requires UUID() default expressions + CHECK support)
+-- Database:       MySQL 8.0+
 -- Normalization:  3NF (Third Normal Form)
 -- Converted from: PostgreSQL version
 -- =============================================================================
 
 -- Notes on conversion from Postgres:
---   * UUID columns        -> CHAR(36) with DEFAULT (UUID())
+--   * UUID PKs/FKs         -> INT AUTO_INCREMENT (all keys, no UUID/CHAR(36) anywhere)
 --   * SERIAL/SMALLSERIAL   -> INT/SMALLINT AUTO_INCREMENT
 --   * TIMESTAMPTZ          -> TIMESTAMP (MySQL stores in UTC internally)
 --   * FILTER (WHERE ...)   -> SUM(CASE WHEN ... THEN 1 ELSE 0 END)
@@ -74,7 +74,7 @@ INSERT INTO payment_statuses (name) VALUES
 -- 4. Users / Designers  (Profile page: Owen M. Jerusalem - Graphic Designer)
 --    A user record represents one designer account in the system.
 CREATE TABLE users (
-    id              CHAR(36)        NOT NULL DEFAULT (UUID()) PRIMARY KEY,
+    id              INT             NOT NULL AUTO_INCREMENT PRIMARY KEY,
     full_name       VARCHAR(128)    NOT NULL,
     initials        CHAR(4),                          -- derived, stored for display (e.g. 'OJ')
     profession      VARCHAR(128)    NOT NULL DEFAULT 'Graphic Designer',
@@ -89,7 +89,7 @@ CREATE TABLE users (
 -- 5. Clients  (Clients page: client names that recur across multiple projects)
 --    Separating client identity from project data (2NF / 3NF).
 CREATE TABLE clients (
-    id              CHAR(36)        NOT NULL DEFAULT (UUID()) PRIMARY KEY,
+    id              INT             NOT NULL AUTO_INCREMENT PRIMARY KEY,
     full_name       VARCHAR(128)    NOT NULL,
     email           VARCHAR(255),
     phone           VARCHAR(32),
@@ -106,11 +106,11 @@ CREATE TABLE clients (
 -- 6. Projects  (Core fact table used by Dashboard, Clients, and Reports pages)
 --    Each row is one design engagement / job.
 CREATE TABLE projects (
-    id                  CHAR(36)        NOT NULL DEFAULT (UUID()) PRIMARY KEY,
+    id                  INT        NOT NULL AUTO_INCREMENT PRIMARY KEY,
 
     -- Ownership
-    user_id             CHAR(36)        NOT NULL,
-    client_id           CHAR(36)        NOT NULL,
+    user_id             INT             NOT NULL,
+    client_id           INT             NOT NULL,
 
     -- Project details (Clients page columns)
     project_name        VARCHAR(256)    NOT NULL,
@@ -131,7 +131,10 @@ CREATE TABLE projects (
     design_status_id    SMALLINT UNSIGNED NOT NULL DEFAULT 1,  -- 'Not Started'
     payment_status_id   SMALLINT UNSIGNED NOT NULL DEFAULT 1,  -- 'Not Paid'
 
-    -- Soft delete / audit
+    -- Soft delete (Clients page: Show Archived / Restore / Delete)
+    is_archived         TINYINT(1)      NOT NULL DEFAULT 0,
+
+    -- Audit
     created_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
@@ -152,8 +155,8 @@ CREATE TABLE projects (
 --    Partial payments are tracked here; the payment_status on projects is
 --    derived / denormalized for fast reads.
 CREATE TABLE payments (
-    id              CHAR(36)        NOT NULL DEFAULT (UUID()) PRIMARY KEY,
-    project_id      CHAR(36)        NOT NULL,
+    id              INT             NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    project_id      INT             NOT NULL,
     amount          DECIMAL(12, 2)  NOT NULL CHECK (amount > 0),
     paid_at         TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     reference_no    VARCHAR(128),
@@ -166,8 +169,8 @@ CREATE TABLE payments (
 
 -- 8. Revisions  (Optional granular log; revisionCount is the summary column)
 CREATE TABLE revisions (
-    id              CHAR(36)        NOT NULL DEFAULT (UUID()) PRIMARY KEY,
-    project_id      CHAR(36)        NOT NULL,
+    id              INT        NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    project_id      INT        NOT NULL,
     revision_no     SMALLINT        NOT NULL,   -- 1-based within the project
     description     TEXT,
     requested_at    DATE            NOT NULL DEFAULT (CURRENT_DATE),
@@ -190,7 +193,7 @@ CREATE TABLE revisions (
 --    view below and skip storing it altogether.
 CREATE TABLE monthly_summaries (
     id              INT UNSIGNED    NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    user_id         CHAR(36)        NOT NULL,
+    user_id         INT             NOT NULL,
     year            SMALLINT        NOT NULL,
     month           SMALLINT        NOT NULL CHECK (month BETWEEN 1 AND 12),
     client_count    INT             NOT NULL DEFAULT 0,
@@ -214,6 +217,7 @@ CREATE INDEX idx_projects_date_negotiated ON projects (date_negotiated DESC);
 CREATE INDEX idx_projects_design_status   ON projects (design_status_id);
 CREATE INDEX idx_projects_payment_status  ON projects (payment_status_id);
 CREATE INDEX idx_projects_project_type    ON projects (project_type_id);
+CREATE INDEX idx_projects_is_archived     ON projects (is_archived);
 
 -- Payment lookups
 CREATE INDEX idx_payments_project_id      ON payments (project_id);
@@ -241,7 +245,10 @@ SELECT
     p.date_negotiated,
     ds.name                     AS design_status,
     ps.name                     AS payment_status,
-    p.user_id
+    p.is_archived,
+    p.user_id,
+    p.created_at,
+    p.updated_at
 FROM projects           p
 JOIN clients            c  ON c.id = p.client_id
 JOIN project_types      pt ON pt.id = p.project_type_id
@@ -314,3 +321,44 @@ GROUP BY p.user_id,
          MONTH(p.date_negotiated),
          DATE_FORMAT(p.date_negotiated, '%b')
 ORDER BY year, month_num;
+
+
+-- =============================================================================
+-- OPTIONAL: MIGRATION FOR EXISTING DATABASES
+-- =============================================================================
+-- Everything above already includes is_archived (projects table + view).
+-- Only run the block below if you have an EXISTING oj_track database that
+-- was created BEFORE is_archived existed and you can't just drop/recreate it.
+-- Do NOT run this against a fresh database created with the schema above —
+-- the column and view already exist and this will error.
+-- =============================================================================
+
+-- -- 1. Add the column (idempotent-safe: only errors if already exists)
+-- ALTER TABLE projects
+--   ADD COLUMN is_archived TINYINT(1) NOT NULL DEFAULT 0
+--   AFTER payment_status_id;
+--
+-- -- 2. Re-create v_clients_list to expose is_archived
+-- DROP VIEW IF EXISTS v_clients_list;
+--
+-- CREATE VIEW v_clients_list AS
+-- SELECT
+--     p.id             AS project_id,
+--     p.user_id,
+--     c.full_name      AS client_name,
+--     p.project_name,
+--     pt.name          AS project_type,
+--     p.rate_amount,
+--     p.revision_count,
+--     p.date_negotiated,
+--     ds.name          AS design_status,
+--     ps.name          AS payment_status,
+--     p.is_archived,
+--     p.created_at,
+--     p.updated_at
+-- FROM projects p
+-- JOIN clients         c  ON c.id  = p.client_id
+-- JOIN project_types   pt ON pt.id = p.project_type_id
+-- JOIN design_statuses ds ON ds.id = p.design_status_id
+-- JOIN payment_statuses ps ON ps.id = p.payment_status_id;
+

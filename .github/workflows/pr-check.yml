@@ -1,4 +1,4 @@
-name: ci / PR check
+name: CI / PR check
 
 on:
   pull_request_target:
