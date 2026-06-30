@@ -1,5 +1,5 @@
 // src/hooks/useArchivedClients.ts
-import { useEffect, useState, useCallback } from "react";
+import {useState, useCallback } from "react";
 import { api } from "@/lib/api";
 import type { Client } from "@/data/store";
 
