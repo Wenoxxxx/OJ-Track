@@ -76,20 +76,38 @@ oj-track/
 # Clone the repository
 git clone https://github.com/ojcreatives/oj-track.git
 
-# Navigate into the project
-cd oj-track
+# FRONTEND Navigate into the project
+cd app
+
+# Install dependencies 
+npm install
+
+# BACKEND Navigate into the project
+cd backend
 
 # Install dependencies
-pnpm install
+npm install
 ```
 
 ### Start Development Server
 
 ```bash
-pnpm dev
+# FRONTEND 
+cd app
+npm run dev
+
+# The app will be available at `http://localhost:5173`
+
+# BACKEND
+cd backend
+npm run dev
+
+# The app will be available at `http://localhost:5000`
+
+
 ```
 
-The app will be available at `http://localhost:5173`
+
 
 ## Environment Setup
 

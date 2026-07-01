@@ -316,7 +316,6 @@ export function ClientsGrid({
         </div>
       ) : clients.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-muted-foreground gap-2">
-          <span className="text-4xl">🗂️</span>
           <p className="text-sm">No records match your filters.</p>
         </div>
       ) : (
