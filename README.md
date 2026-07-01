@@ -19,6 +19,7 @@ A commission management system for OJ Creatives. OJ-Track provides a centralized
 - Client count
 - Project statuses (not started, pending, done)
 - Payment tracking (not yet, pending, completed)
+- Recent project update
 - Monthly client activity graphs
 
 ### Client Dashboard
@@ -29,6 +30,8 @@ A commission management system for OJ Creatives. OJ-Track provides a centralized
 ### Reports & Analytics
 - Total projects summary
 - Total sales
+- Total revisions
+- Average rate
 - Graph comparisons by month
 - Exportable insights for workflow and growth
 
@@ -101,8 +104,9 @@ Get these values from your [Supabase project settings](https://supabase.com/docs
 
 ## Roadmap
 
-- [ ] Authentication (Supabase Auth)
+- [ ] Client crud optimization
 - [ ] Role-based access (Admin vs Client view)
+- [ ] Client Dashboard
 - [ ] Export reports (CSV/PDF)
 - [ ] Notifications for payment updates
 - [ ] Dark mode toggle
