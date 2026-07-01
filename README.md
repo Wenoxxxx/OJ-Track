@@ -95,7 +95,6 @@ The app will be available at `http://localhost:5173`
 
 Create a `.env` file in the project root with your credentials:
 
-Get these values from your [Supabase project settings](https://supabase.com/docs/guides/getting-started/setup-project).
 
 ## Roadmap
 
