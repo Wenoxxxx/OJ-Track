@@ -9,7 +9,8 @@ A commission management system for OJ Creatives. OJ-Track provides a centralized
 - **Vite** — Fast build tool and dev server
 - **Tailwind CSS** — Utility-first styling for responsive design
 - **Shadcn** — UI component library with tailwind + react
-- **Supabase** — Backend-as-a-service for authentication, database, and storage
+- **Express** – Backend framework for building APIs and handling server-side logic
+- **MySQL** – Relational database for structured data storage and queries
 
 ## Features
 
@@ -35,18 +36,29 @@ A commission management system for OJ Creatives. OJ-Track provides a centralized
 
 ```
 oj-track/
-├── src/
-│   ├── components/       # Reusable UI components (tables, charts, modals)
-│   ├── pages/            # Dashboard, Clients, Reports
-│   ├── hooks/            # Custom React hooks (data fetching, state)
-│   ├── store/            # Zustand state management
-│   ├── lib/              # Supabase client, utilities
-│   ├── styles/           # Tailwind + Shadcn styles
-│   └── App.tsx           # Root app component
-├── public/               # Static assets
-├── package.json
-├── tsconfig.json
-└── README.md
+├── app
+│   ├── public
+│   └── src
+│       ├── assets
+│       ├── components
+│       │   ├── clients
+│       │   ├── dashboard
+│       │   ├── profile
+│       │   ├── reports
+│       │   └── ui
+│       ├── data
+│       ├── hooks
+│       ├── layouts
+│       ├── lib
+│       └── pages
+├── backend
+│   └── src
+│       ├── config
+│       ├── controllers
+│       └── routes
+├── db
+└── seed
+
 ```
 
 ## Installation
