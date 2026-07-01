@@ -67,13 +67,26 @@ export function CreateProjectModal({ open, onClose, onCreated }: CreateProjectMo
   const [apiError,  setApiError]  = useState<string | null>(null);
   const firstRef = useRef<HTMLInputElement>(null);
 
-  // Reset when opened
-  useEffect(() => {
+  // Reset form state during render when the modal transitions closed -> open.
+  // (This avoids the "setState in effect" cascading-render pattern flagged by
+  // react-hooks/set-state-in-effect; it's React's documented approach for
+  // adjusting state in response to a prop change.)
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (open !== prevOpen) {
+    setPrevOpen(open);
     if (open) {
       setForm(defaultForm());
       setErrors({});
       setApiError(null);
-      setTimeout(() => firstRef.current?.focus(), 50);
+    }
+  }
+
+  // Focusing a DOM node is a genuine side effect (it talks to an external
+  // system, the browser's focus state), so it stays in an effect.
+  useEffect(() => {
+    if (open) {
+      const id = setTimeout(() => firstRef.current?.focus(), 50);
+      return () => clearTimeout(id);
     }
   }, [open]);
 

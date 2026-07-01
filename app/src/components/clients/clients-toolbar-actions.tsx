@@ -9,7 +9,6 @@ interface ClientsToolbarActionsProps {
 
 export function ClientsToolbarActions({
   showArchived,
-  archivedCount,
   onToggleArchived,
   onNewProject,
 }: ClientsToolbarActionsProps) {
@@ -26,11 +25,6 @@ export function ClientsToolbarActions({
       >
         <Archive size={13} />
         {showArchived ? "Hide Archived" : "Show Archived"}
-        {!showArchived && archivedCount > 0 && (
-          <span className="ml-1 bg-muted text-muted-foreground text-[10px] px-1.5 py-0.5 font-bold">
-            {archivedCount}
-          </span>
-        )}
       </button>
 
       <button

@@ -309,7 +309,11 @@ export function ClientsGrid({
 }: ClientsGridProps) {
   return (
     <div className="space-y-8">
+
       {/* ── Active grid ── */}
+      <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">
+        Current Projects ({clients.length})
+      </h3>
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {Array.from({ length: 8 }).map((_, i) => <CardSkeleton key={i} />)}
