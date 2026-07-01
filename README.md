@@ -93,12 +93,7 @@ The app will be available at `http://localhost:5173`
 
 ## Environment Setup
 
-Create a `.env` file in the project root with your Supabase credentials:
-
-```env
-VITE_SUPABASE_URL=your-supabase-url
-VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
-```
+Create a `.env` file in the project root with your credentials:
 
 Get these values from your [Supabase project settings](https://supabase.com/docs/guides/getting-started/setup-project).
 
